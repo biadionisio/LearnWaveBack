@@ -1,7 +1,10 @@
 package com.example.learnwave.controller;
 
 import com.example.learnwave.enums.TipoUsuario;
+import com.example.learnwave.dto.LoginResponse;
+import com.example.learnwave.dto.LoginRequest;
 import com.example.learnwave.model.entity.Usuario;
+import com.example.learnwave.security.ChatTokenService;
 import com.example.learnwave.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private ChatTokenService chatTokenService;
 
     // CADASTRAR usuário
     @PostMapping
@@ -168,8 +174,9 @@ public class UsuarioController {
 
     // LOGAR usuário
     @PostMapping("/login")
-    public ResponseEntity<Usuario> login(@RequestParam String email, @RequestParam String senha, @RequestParam(required = false) String tipoUsuario) {
-        System.out.println("Login attempt - Email: " + email + ", TipoUsuario: " + tipoUsuario);
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) {
+        String email = login.email();
+        String senha = login.senha();
         
         if (email == null || email.trim().isEmpty()) {
             throw new RuntimeException("Email e obrigatorio");
@@ -203,7 +210,7 @@ public class UsuarioController {
         }
 
         System.out.println("Login bem-sucedido para: " + usuario.getEmail());
-        return ResponseEntity.ok(usuario);
+        return ResponseEntity.ok(LoginResponse.from(usuario, chatTokenService.create(usuario.getId())));
     }
 
     // APAGAR usuário

@@ -12,4 +12,5 @@ public interface ProfessorAlunoRepository extends JpaRepository<ProfessorAluno, 
 
     List<ProfessorAluno> findByIdProfessorId(Integer professorId);
     List<ProfessorAluno> findByIdAlunoId(Integer alunoId);
+    boolean existsByIdProfessorIdAndIdAlunoId(Integer professorId, Integer alunoId);
 }
