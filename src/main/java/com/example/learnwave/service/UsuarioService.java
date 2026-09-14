@@ -160,12 +160,6 @@ public class UsuarioService {
     public Usuario autenticar(String email, String senha) {
         Usuario usuario = usuarioDAO.buscarPorEmail(email);
         if (usuario != null && verificarSenha(senha, usuario.getSenha())) {
-            // Migração gradual: se a senha ainda é texto plano, criptografa e salva
-            if (!isBCrypt(usuario.getSenha())) {
-                usuario.setSenha(passwordEncoder.encode(senha));
-                usuario.setDataAtualizacao(LocalDateTime.now());
-                usuarioDAO.atualizar(usuario);
-            }
             return usuario;
         }
         return null;
